@@ -19,7 +19,11 @@ end
 Then(/I should see "(.*)" before "(.*)"/) do |_e1, _e2|
   #  ensure that that e1 occurs before e2.
   #  page.body is the entire content of the page as a string.
-  pending "Fill in this step in movie_steps.rb"
+  body = page.body
+  index1 = body.index(_e1)
+  index2 = body.index(_e2)
+  expect(index1).to be < index2
+  # pending "Fill in this step in movie_steps.rb"
 end
 
 # Make it easier to express checking or unchecking several boxes at once
@@ -30,12 +34,11 @@ When(/I (un)?check the following ratings: (.*)/) do |_uncheck, _rating_list|
   # HINT: use String#split to split up the rating_list, then
   #   iterate over the ratings and reuse the "When I check..." or
   #   "When I uncheck..." steps in lines 89-95 of web_steps.rb
-  rating_list.split(',').map(&:strip).each do |rating|
-    field_name = "ratings_#{rating}"
-    if uncheck
-      step %{I uncheck "#{field_name}"}
+  _rating_list.split(',').map(&:strip).each do |rating|
+    if _uncheck
+      step %{I uncheck "#{rating}"}
     else
-      step %{I check "#{field_name}"}
+      step %{I check "#{rating}"}
     end
   end
   # pending "Fill in this step in movie_steps.rb"
@@ -44,13 +47,14 @@ end
 # Part 2, Step 3
 Then(/^I should (not )?see the following movies: (.*)$/) do |_no, _movie_list|
   # Take a look at web_steps.rb Then /^(?:|I )should see "([^"]*)"$/
-  movie_list.split(',').map(&:strip).each do |title|
-    if no
+  _movie_list.split(',').map(&:strip).each do |title|
+    if _no
       expect(page).not_to have_content(title)
     else
       expect(page).to have_content(title)
     end
   # pending "Fill in this step in movie_steps.rb"
+  end
 end
 
 Then(/I should see all the movies/) do
