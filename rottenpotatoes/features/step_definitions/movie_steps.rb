@@ -4,8 +4,9 @@ Given(/the following movies exist/) do |movies_table|
   movies_table.hashes.each do |movie|
     # each returned element will be a hash whose key is the table header.
     # you should arrange to add that movie to the database here.
+    Movie.create!(movie)
   end
-  pending "Fill in this step in movie_steps.rb"
+  # pending "Fill in this step in movie_steps.rb"
 end
 
 Then(/(.*) seed movies should exist/) do |n_seeds|
@@ -29,18 +30,34 @@ When(/I (un)?check the following ratings: (.*)/) do |_uncheck, _rating_list|
   # HINT: use String#split to split up the rating_list, then
   #   iterate over the ratings and reuse the "When I check..." or
   #   "When I uncheck..." steps in lines 89-95 of web_steps.rb
-  pending "Fill in this step in movie_steps.rb"
+  rating_list.split(',').map(&:strip).each do |rating|
+    field_name = "ratings_#{rating}"
+    if uncheck
+      step %{I uncheck "#{field_name}"}
+    else
+      step %{I check "#{field_name}"}
+    end
+  end
+  # pending "Fill in this step in movie_steps.rb"
 end
 
 # Part 2, Step 3
 Then(/^I should (not )?see the following movies: (.*)$/) do |_no, _movie_list|
   # Take a look at web_steps.rb Then /^(?:|I )should see "([^"]*)"$/
-  pending "Fill in this step in movie_steps.rb"
+  movie_list.split(',').map(&:strip).each do |title|
+    if no
+      expect(page).not_to have_content(title)
+    else
+      expect(page).to have_content(title)
+    end
+  # pending "Fill in this step in movie_steps.rb"
 end
 
 Then(/I should see all the movies/) do
   # Make sure that all the movies in the app are visible in the table
-  pending "Fill in this step in movie_steps.rb"
+  rows = page.all('table#movies tbody tr').count
+  expect(rows).to eq Movie.count
+  # pending "Fill in this step in movie_steps.rb"
 end
 
 ### Utility Steps Just for this assignment.
